@@ -13,3 +13,5 @@ Summary of Work Since Last Milestone:
 - Cameron: Started building the 'users' and 'favorites' entities. Also got the front-end of the web page running.
 - Connor: Worked on converting the DTARP dataset from a .csv file to a .db format and cleaned up the DTARP data for use in the project.
 - Marcus: Developed the necessary equations and SQL queries for calculating metrics like Net Operating Income (NOI) and Cap Rate.
+
+GitHub Repository: [Insite Reality Repo](https://github.com/cameronmorganDuke/CS316-Project)
