@@ -1,0 +1,52 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+%}
+<h1 align="center">What home would you like information on?</h1>
+<ul class="list-group list-group-flush" id="notes">
+  {% for note in user.notes %}
+  <li class="list-group-item">
+    {{ note.data }}
+    <button type="button" class="close" onClick="deleteNote({{ note.id }})">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </li>
+  {% endfor %}
+</ul>
+<form method="POST">
+  <!-- Street Address -->
+  <label for="address">Street Address:</label>
+  <input
+    type="text"
+    id="address"
+    name="address"
+    placeholder="123 Main St"
+    required
+  />
+  <br /><br />
+  <!-- City -->
+  <label for="city">City:</label>
+  <input type="text" id="city" name="city" required />
+  <br /><br />
+  <!-- State/Province/Region -->
+  <label for="state">State/Province/Region:</label>
+  <input type="text" id="state" name="state" required />
+  <br /><br />
+
+  <!-- ZIP/Postal Code -->
+  <label for="zip">ZIP/Postal Code:</label>
+  <input type="text" id="zip" name="zip" required />
+  <br /><br />
+
+  <!-- Country -->
+  <label for="country">Country:</label>
+  <select id="country" name="country" required>
+    <option value="USA">United States</option>
+    <option value="Canada">Canada</option>
+    <option value="UK">United Kingdom</option>
+    <!-- Add more countries as needed -->
+  </select>
+  <br /><br />
+  <div align="center">
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </div>
+</form>
+{% endblock %}
