@@ -21,14 +21,10 @@ def create_app():
     db.init_app(app)
 
     # Import the views and authentication blueprint modules
-    from .views import views
     from .auth import auth
     from .pick_home import pick_home
     
     app.register_blueprint(pick_home, url_prfix = '/')
-
-    # Register the 'views' blueprint with the root URL ('/')
-    app.register_blueprint(views, url_prefix='/')
     
     # Register the 'auth' blueprint with the root URL ('/')
     app.register_blueprint(auth, url_prefix='/')
