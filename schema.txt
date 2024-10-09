@@ -1,0 +1,61 @@
+Dtarp       [YEAR                          int64
+            REID                         float64
+            PIN                            int64
+            PIN_EXT                        int64
+            PROPERTY_DESCR                object
+            LOCATION_ADDR                 object
+            VCS                           object
+            CITY                          object
+            SPEC_DIST_PCNT                 int64
+            LAND_CLASS                    object
+            CALCULATED_ACRES             float64
+            ZONING                        object
+            ETJ                           object
+            PROPERTY_OWNER                object
+            OWNER_MAIL_1                  object
+            OWNER_MAIL_CITY               object
+            OWNER_MAIL_STATE              object
+            OWNER_MAIL_ZIP                object
+            TOTAL_LAND_VALUE_ASSESSED    float64
+            TOTAL_BLDG_VALUE_ASSESSED      int64
+            LAND_USE_VALUE               float64
+            TOTAL_PROP_VALUE             float64
+            DEED_DATE                     object
+            DEED_BOOK                     object
+            DEED_PAGE                     object
+            PKG_SALE_DATE                 object
+            PKG_SALE_PRICE               float64
+            LAND_SALE_DATE                object
+            LAND_SALE_PRICE              float64
+            Number_of_Buildings            int64
+            Total_Bedrooms                 int64
+            Total_Bathrooms                int64
+            Total_Half_Bathrooms           int64
+            OTHER_EXMPT                    int64
+            NEIGHBORHOOD                  object
+            TOTAL_OBLDG_VALUE            float64
+            GROSS_LEASABLE_AREA            int64
+            PLAT_BOOK                     object
+            PLAT_PAGE                     object
+            ORIGINAL_BILL_AMOUNT         float64
+            number                       float64
+            street                        object]
+
+User        [id                          Integer
+            email                         String
+            password                      String
+            first_name                    String]
+
+Favorites   [user_id                     Integer
+            reid                         Integer]
+
+Note        [note_id                     Integer
+            data                          String
+            date                        DateTime
+            user_id                      Integer]
+
+
+
+ER:
+
+NOTE (---user_id=id----- USER ---- id = user_id FAVORITES reid=reid-----DTARP
