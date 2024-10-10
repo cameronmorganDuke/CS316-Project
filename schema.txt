@@ -46,8 +46,6 @@ User        [id                          Integer
             password                      String
             first_name                    String]
 
-Favorites   [user_id                     Integer
-            reid                         Integer]
 
 Note        [note_id                     Integer
             data                          String
@@ -58,4 +56,4 @@ Note        [note_id                     Integer
 
 ER:
 
-NOTE (---user_id=id----- USER ---- id = user_id FAVORITES reid=reid-----DTARP
+NOTE (---user_id=id----- USER ---- address(from note) = LOCATION_ADDR-----DTARP
