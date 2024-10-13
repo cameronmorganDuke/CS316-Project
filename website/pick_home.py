@@ -10,6 +10,8 @@ city = ""
 state = ""
 zip_code = ""
 country = ""
+change_input_one = ""
+change_input_two = ""
 
 @pick_home.route('/', methods=['GET', 'POST'])
 @login_required
@@ -37,8 +39,8 @@ def home_info():
     #create function to get Cap Rate and NOI 
     cap_rate = "connor is gay"
     noi = "test noi"
-    slider_value = request.form.get('sliderValue')
-    print(f"Slider value received: {slider_value}")
+    selected_value = request.form.get('selected_value')
+    print(f"Slider value received: {selected_value}")
     #cap_rate = function to get cap rate
     #noi = function to get noi
     #new_info = 
@@ -70,4 +72,13 @@ def delete_note():
             db.session.commit()
 
     return redirect(url_for('pick_home.fav'))
+
+@pick_home.route('/process_form1', methods=['POST'])
+def get_form():
+    form_one = request.form.get('selected_value_one')
+    form_two = request.form.get('selected_value_two')
+    print(form_one)
+    print(form_two)
+    flash('Information updated!', category='success')
+    return redirect(url_for('pick_home.home_info'))
 
