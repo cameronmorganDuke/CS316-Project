@@ -4,6 +4,16 @@
   <h1 align="center">Information About {{ address }}</h1>
   <p>Cap Rate: {{ cap_rate }}</p>
   <p>Net Operating Income: {{ noi }}</p>
+  <div class="slidecontainer">
+    <input
+      type="range"
+      min="1"
+      max="100"
+      value="50"
+      class="slider"
+      id="myRange"
+    />
+  </div>
 
   <div align="center">
     <button type="submit" class="btn btn-primary">Add Note</button>

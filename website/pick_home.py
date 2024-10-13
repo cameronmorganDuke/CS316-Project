@@ -35,9 +35,10 @@ def home():
 def home_info():
     global address, city, state, zip_code, country
     #create function to get Cap Rate and NOI 
-    cap_rate = "test cap rate"
+    cap_rate = "connor is gay"
     noi = "test noi"
-    
+    slider_value = request.form.get('sliderValue')
+    print(f"Slider value received: {slider_value}")
     #cap_rate = function to get cap rate
     #noi = function to get noi
     #new_info = 
