@@ -19,6 +19,7 @@ change_input_two = ""
 def home():
     if request.method == 'POST': 
         global address, city, state, zip_code, country
+        address = request.form.get('address')
         session['address'] = request.form.get('address')
         session['city'] = request.form.get('city')
         session['state'] = request.form.get('state')
@@ -107,13 +108,14 @@ def home_info():
 
         # Create a note string with the gathered data
         note = f"Address: {address} Cap Rate: {cap_rate} Net Operating Income: {noi}"
+        print(address)
 
         # Save note in the database
         new_note = Note(data=note, user_id=current_user.id)
         db.session.add(new_note)
         db.session.commit()
         flash('Note added!', category='success')
-    return render_template("display_home.html", user=current_user, address=address, cap_rate=cap_rate, noi=noi)
+    return render_template("display_home.html", user=current_user, address=address, cap_rate=cap_rate, noi=noi, monthly_rent=monthly_rent, annual_rental_income=annual_rental_income, expenses=expenses)
 
 @pick_home.route('/favorites', methods=['GET', 'POST'])
 def fav():

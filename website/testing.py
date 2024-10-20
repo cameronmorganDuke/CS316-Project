@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
-from database_init import Favorites
+#from database_init import Favorites
 
 # Create an engine for a database stored in 'my_database.db'
 engine = create_engine('sqlite:///instance/realestate.db', echo=True)
