@@ -3,39 +3,36 @@
 <h1 align="center">Information About {{ address }}</h1>
 
 <form action="/process_form1" method="POST">
-  <p>Cap Rate: {{ cap_rate }}</p>
-  <p>Net Operating Income: {{ noi }}</p>
-  <p> Monthly Rent: {{monthly_rent}} </p>
-  <p> Rental Income: {{annual_rental_income}} </p>
-  <p> Expenses: {{expenses}} </p>
-  <p> Zoning: {{zoning}} </p>
-  <p> Square Feet: {{sqft}} </p>
-  <p> Property Value: {{property_value}} </p>
-  <p> Number of Beds {{num_beds}} </p>
-  <p> Acres {{acres}} </p>
-  <p> Extraterritorial Jurisdiction {{etj}} </p>
-  
+  <div class="row mb-3 text-center">
+    <div class="col-4 themed-grid-col">Cap Rate: {{ cap_rate }}</div>
+    <div class="col-4 themed-grid-col">Net Operating Income: {{ noi }}</div>
+    <div class="col-4 themed-grid-col">Monthly Rent: {{monthly_rent}}</div>
+  </div>
+  <div class="row mb-3 text-center">
+    <div class="col-4 themed-grid-col">Rental Income: {{annual_rental_income}}</div>
+    <div class="col-4 themed-grid-col">Expenses: {{expenses}}</div>
+    <div class="col-4 themed-grid-col">Zoning: {{zoning}}</div>
+  </div>
+  <div class="row mb-3 text-center">
+    <div class="col-4 themed-grid-col">Square Feet: {{sqft}}</div>
+    <div class="col-4 themed-grid-col">Property Value: {{property_value}}</div>
+    <div class="col-4 themed-grid-col">Number of Beds {{num_beds}}</div>
+  </div>
+  <div class="row mb-3 text-center">
+    <div class="col-4 themed-grid-col">Acres {{acres}}</div>
+    <div class="col-4 themed-grid-col">Extraterritorial Jurisdiction {{etj}}</div>
+  </div>
+  <div class="row mb-3 text-center">
+    <div class="col-6 themed-grid-col">Test Input 1:<input type="text" class="form-control" id="test_input" placeholder="1" value="" required=""></div>
+    <div class="col-6 themed-grid-col">Test Input 2:<input type="text" class="form-control" id="test_input" placeholder="1" value="" required=""></div>
+  </div>
+  <div class="row mb-3 text-center">
+    <div class="col-4 themed-grid-col"></div>
+    <div class="col-4 themed-grid-col"><button type="submit" class="btn btn-primary">Update Info</button></div>
+    <div class="col-4 themed-grid-col"></div>
+  </div>
   
 
-  <div class="form-group">
-    <label for="sel2">Change Input 1:</label>
-    <select class="form-control" id="sel2" name="selected_value_one">
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-    </select>
-  </div>
-  <div class="form-group">
-    <label for="sel2">Change Input 2:</label>
-    <select class="form-control" id="sel2" name="selected_value_two">
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-    </select>
-  </div>
-  <button type="submit" class="btn btn-primary">Update Info</button>
 </form>
 <form method="POST">
   <div class="row">
