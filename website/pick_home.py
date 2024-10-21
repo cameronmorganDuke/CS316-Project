@@ -6,44 +6,21 @@ import json
 from .utils import *
 
 pick_home = Blueprint('pick_home', __name__)
-address = ""
-city = ""
-state = ""
-zip_code = ""
-country = ""
-change_input_one = ""
-change_input_two = ""
 
 @pick_home.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
     if request.method == 'POST': 
-        global address, city, state, zip_code, country
         address = request.form.get('address')
-        session['address'] = request.form.get('address')
-        session['city'] = request.form.get('city')
-        session['state'] = request.form.get('state')
-        session['zip_code'] = request.form.get('zip')  # 'zip' matches the name attribute
-        session['country'] = request.form.get('country')
-        print(address, city, state, zip_code, country)
-        
-        
-        
-        # After processing the POST request, render display_home.html
-        return redirect(url_for('pick_home.home_info'))
+        return redirect(url_for('pick_home.home_info', address=address))
 
-    # If it's a GET request, render the initial form
     return render_template("get_home.html", user=current_user)
 
-@pick_home.route('/display_home', methods=['GET', 'POST'])
-def home_info():
-    global address, city, state, zip_code, country
-    
-    street_number, street_name = extract_address_components(session['address'])
+@pick_home.route('/<address>', methods=['GET', 'POST'])
+def home_info(address):
+    street_number, street_name = extract_address_components(address)
     street_number = street_number.strip()
     street_name = street_name.upper().strip()
-    city_name = session['city'].upper().strip()
-    
     query = f"""
         SELECT ZONING, GROSS_LEASABLE_AREA, TOTAL_PROP_VALUE, Total_Bedrooms, ETJ, CALCULATED_ACRES
         FROM dtarp
@@ -84,25 +61,13 @@ def home_info():
     # annual gross scheduled income = total monthly rental income * 12
     # gross operating income = annual gross scheduled income - vacancy allowance % * annual gross scheduled income
 
-    
     #create function to get Cap Rate and NOI 
     noi = annual_rental_income - expenses
     cap_rate = noi / property_value * 100
-    
-    print('zoning', 'sqft', 'property_value', 'num_beds', 'etj', 'acres')
-    print(zoning, sqft, property_value, num_beds, etj, acres)
-    print()
-    print("monthly rent", monthly_rent)
-    print("rental income", annual_rental_income)
-    print("expenses", expenses)
-    print("noi", noi)
-    print("cap rate", cap_rate)
-    
+        
     selected_value = request.form.get('selected_value')
     print(f"Slider value received: {selected_value}")
-    #cap_rate = function to get cap rate
-    #noi = function to get noi
-    #new_info = 
+    
     if request.method == 'POST': 
         #create function to get Cap Rate and NOI 
 
@@ -115,7 +80,7 @@ def home_info():
         db.session.add(new_note)
         db.session.commit()
         flash('Note added!', category='success')
-    return render_template("display_home.html", user=current_user, address=address, cap_rate=cap_rate, noi=noi, monthly_rent=monthly_rent, annual_rental_income=annual_rental_income, expenses=expenses)
+    return render_template("display_home.html", user=current_user, address=address, cap_rate=cap_rate, noi=noi, monthly_rent=monthly_rent, annual_rental_income=annual_rental_income, expenses=expenses, zoning=zoning, sqft=sqft, property_value=property_value, num_beds=num_beds, acres=acres, etj=etj)
 
 @pick_home.route('/favorites', methods=['GET', 'POST'])
 def fav():
