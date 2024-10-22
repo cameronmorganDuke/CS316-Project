@@ -16,4 +16,5 @@ Summary of Work Since Last Milestone:
 
 GitHub Repository: [Insite Reality Repo](https://github.com/cameronmorganDuke/CS316-Project)
 Milestone 3 PDF: https://docs.google.com/document/d/1k_QlUJVzWu-o8RoOcK3_-bplXWzhZAXNSWASDRtc4bo/edit?usp=sharing
+Presentation Video: https://youtu.be/WqenHw_AaK4 
 
