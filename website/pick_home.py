@@ -4,6 +4,7 @@ from .models import Note
 from . import db
 import json
 from .utils import *
+from sqlalchemy import *
 
 pick_home = Blueprint('pick_home', __name__)
 
@@ -107,3 +108,43 @@ def get_form():
     flash('Information updated!', category='success')
     return redirect(url_for('pick_home.home_info'))
 
+# Route for rendering the HTML page
+@pick_home.route('/all_addresses', methods=['GET'])
+@login_required
+def all_addresses():
+    return render_template('all_addresses.html', user=current_user)
+
+# API route to return the addresses as JSON
+@pick_home.route('/api/addresses', methods=['GET'])
+@login_required
+def get_all_addresses():
+    try:
+        # Query to fetch all addresses
+        # query = """
+        #     SELECT street, number, city, state, zip_code, country 
+        #     FROM dtarp
+        # """
+        query = """
+            SELECT street, number, NEIGHBORHOOD, CITY, PIN_EXT
+            FROM dtarp
+        """
+        result = db.session.execute(text(query))
+        addresses = result.fetchall()
+
+        # Convert the query result to a list of dictionaries
+        address_list = [{
+            'street': row[0],
+            'city': row[3],
+            'state': 'NC',
+            'zip_code': row[2],
+            'country': 'USA',
+            'number': row[1]
+        } for row in addresses]
+
+        # Return the list as a JSON response
+        return jsonify(address_list)
+
+    except Exception as e:
+        # Print the full exception for debugging
+        print(f"Error: {str(e)}")
+        return jsonify({'error': 'Failed to fetch addresses', 'details': str(e)}), 500
