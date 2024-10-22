@@ -15,3 +15,5 @@ Summary of Work Since Last Milestone:
 - Marcus: Developed the necessary equations and SQL queries for calculating metrics like Net Operating Income (NOI) and Cap Rate.
 
 GitHub Repository: [Insite Reality Repo](https://github.com/cameronmorganDuke/CS316-Project)
+Milestone 3 PDF: https://docs.google.com/document/d/1k_QlUJVzWu-o8RoOcK3_-bplXWzhZAXNSWASDRtc4bo/edit?usp=sharing
+
