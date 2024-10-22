@@ -132,14 +132,38 @@ def get_all_addresses():
         addresses = result.fetchall()
 
         # Convert the query result to a list of dictionaries
-        address_list = [{
-            'street': row[0],
-            'city': row[3],
-            'state': 'NC',
-            'zip_code': row[2],
-            'country': 'USA',
-            'number': row[1]
-        } for row in addresses]
+
+
+        address_list = []
+
+        for row in addresses:
+            try:
+                # Attempt to create the address part
+                address_part = f'{int(row[1])} {row[0]}'
+                address_part = " ".join(address_part.split())  # Clean up any extra spaces
+
+                # Generate the URL using url_for
+                url = url_for('pick_home.home_info', address=address_part)
+
+                # Create the link
+                link = f'<a href="{url}">View Property</a>'
+            except (TypeError, ValueError, AssertionError):
+                # If it fails (e.g., row[1] is None), set link to None
+                link = None
+
+            # Add the address to the list
+            address = {
+                'street': row[0],
+                'city': row[3],
+                'state': 'NC',
+                'zip_code': row[2],
+                'country': 'USA',
+                'number': row[1],
+                'link': link
+            }
+
+            address_list.append(address)
+
 
         # Return the list as a JSON response
         return jsonify(address_list)

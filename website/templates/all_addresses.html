@@ -1,133 +1,142 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %}All Home Addresses{% endblock %} {%
+block content %}
+<h1 class="text-center">All Home Addresses</h1>
 
-{% block title %}All Home Addresses{% endblock %}
+<div class="container">
+  <input
+    type="text"
+    id="search-input"
+    class="form-control mb-4"
+    placeholder="Search by address..."
+  />
 
-{% block content %}
-    <h1 class="text-center">All Home Addresses</h1>
-    
-    <div class="container">
-        <input type="text" id="search-input" class="form-control mb-4" placeholder="Search by address..." />
+  <table class="table table-bordered table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th>Number</th>
+        <th>Street</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Neighborhood</th>
+        <th>Country</th>
+        <th>Link</th>
+      </tr>
+    </thead>
+    <tbody id="address-list">
+      <!-- Address rows will be dynamically generated here -->
+    </tbody>
+  </table>
 
-        <table class="table table-bordered table-hover">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Number</th>
-                    <th>Street</th>
-                    <th>City</th>
-                    <th>State</th>
-                    <th>Neighborhood</th>
-                    <th>Country</th>
-                </tr>
-            </thead>
-            <tbody id="address-list">
-                <!-- Address rows will be dynamically generated here -->
-            </tbody>
-        </table>
+  <!-- Pagination Controls -->
+  <nav aria-label="Page navigation">
+    <ul
+      class="pagination justify-content-center flex-wrap"
+      id="pagination-controls"
+    ></ul>
+  </nav>
+</div>
 
-        <!-- Pagination Controls -->
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center flex-wrap" id="pagination-controls"></ul>
-        </nav>
-    </div>
+<style>
+  /* Add custom styles for pagination */
+  .pagination .page-item.active .page-link {
+    background-color: #007bff; /* Fancy blue for active state */
+    border-color: #007bff;
+    color: white;
+  }
+  .pagination .page-link {
+    color: #007bff;
+  }
+  .pagination .page-link:hover {
+    background-color: #0056b3;
+    color: white;
+  }
+</style>
 
-    <style>
-        /* Add custom styles for pagination */
-        .pagination .page-item.active .page-link {
-            background-color: #007bff; /* Fancy blue for active state */
-            border-color: #007bff;
-            color: white;
-        }
-        .pagination .page-link {
-            color: #007bff;
-        }
-        .pagination .page-link:hover {
-            background-color: #0056b3;
-            color: white;
-        }
-    </style>
+<script>
+  // Fetch the addresses and display them
+  fetch("/api/addresses")
+    .then((response) => response.json())
+    .then((data) => {
+      const addressList = document.getElementById("address-list");
+      const paginationControls = document.getElementById("pagination-controls");
+      const itemsPerPage = 15;
+      let currentPage = 1;
+      let filteredAddresses = data;
 
-    <script>
-        // Fetch the addresses and display them
-        fetch('/api/addresses') 
-            .then(response => response.json())
-            .then(data => {
-                const addressList = document.getElementById('address-list');
-                const paginationControls = document.getElementById('pagination-controls');
-                const itemsPerPage = 15;
-                let currentPage = 1;
-                let filteredAddresses = data;
+      // Function to display addresses
+      function displayAddresses(addresses, page) {
+        addressList.innerHTML = ""; // Clear the existing list
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const paginatedAddresses = addresses.slice(start, end);
 
-                // Function to display addresses
-                function displayAddresses(addresses, page) {
-                    addressList.innerHTML = ''; // Clear the existing list
-                    const start = (page - 1) * itemsPerPage;
-                    const end = start + itemsPerPage;
-                    const paginatedAddresses = addresses.slice(start, end);
-
-                    paginatedAddresses.forEach(address => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
+        paginatedAddresses.forEach((address) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
                             <td>${address.number}</td>
                             <td>${address.street}</td>
                             <td>${address.city}</td>
                             <td>${address.state}</td>
                             <td>${address.zip_code}</td>
                             <td>${address.country}</td>
+                            <td>${address.link}</td>
                         `;
-                        addressList.appendChild(row);
-                    });
+          addressList.appendChild(row);
+        });
 
-                    updatePaginationControls(addresses.length, page);
-                }
+        updatePaginationControls(addresses.length, page);
+      }
 
-                // Update pagination controls
-                function updatePaginationControls(totalItems, currentPage) {
-                    paginationControls.innerHTML = ''; // Clear existing controls
-                    const totalPages = Math.ceil(totalItems / itemsPerPage);
+      // Update pagination controls
+      function updatePaginationControls(totalItems, currentPage) {
+        paginationControls.innerHTML = ""; // Clear existing controls
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-                    for (let page = 1; page <= totalPages; page++) {
-                        const li = document.createElement('li');
-                        li.classList.add('page-item');
-                        if (page === currentPage) {
-                            li.classList.add('active');
-                        }
-                        li.innerHTML = `
+        for (let page = 1; page <= totalPages; page++) {
+          const li = document.createElement("li");
+          li.classList.add("page-item");
+          if (page === currentPage) {
+            li.classList.add("active");
+          }
+          li.innerHTML = `
                             <a class="page-link" href="#" data-page="${page}">${page}</a>
                         `;
-                        paginationControls.appendChild(li);
-                    }
+          paginationControls.appendChild(li);
+        }
 
-                    // Add event listeners to pagination links
-                    const pageLinks = document.querySelectorAll('.page-link');
-                    pageLinks.forEach(link => {
-                        link.addEventListener('click', function(event) {
-                            event.preventDefault();
-                            currentPage = parseInt(link.getAttribute('data-page'));
-                            displayAddresses(filteredAddresses, currentPage);
-                        });
-                    });
-                }
+        // Add event listeners to pagination links
+        const pageLinks = document.querySelectorAll(".page-link");
+        pageLinks.forEach((link) => {
+          link.addEventListener("click", function (event) {
+            event.preventDefault();
+            currentPage = parseInt(link.getAttribute("data-page"));
+            displayAddresses(filteredAddresses, currentPage);
+          });
+        });
+      }
 
-                // Initially display all addresses
-                displayAddresses(data, currentPage);
+      // Initially display all addresses
+      displayAddresses(data, currentPage);
 
-                // Search functionality
-                const searchInput = document.getElementById('search-input');
-                searchInput.addEventListener('input', function() {
-                    const searchTerm = searchInput.value.toLowerCase();
-                    filteredAddresses = data.filter(address => {
-                        return (
-                            `${address.number} ${address.street}`.toLowerCase().includes(searchTerm) ||
-                            address.city.toLowerCase().includes(searchTerm) ||
-                            address.state.toLowerCase().includes(searchTerm) ||
-                            address.zip_code.toLowerCase().includes(searchTerm) ||
-                            address.country.toLowerCase().includes(searchTerm)
-                        );
-                    });
-                    currentPage = 1; // Reset to the first page after search
-                    displayAddresses(filteredAddresses, currentPage);
-                });
-            })
-            .catch(error => console.error('Error fetching addresses:', error));
-    </script>
+      // Search functionality
+      const searchInput = document.getElementById("search-input");
+      searchInput.addEventListener("input", function () {
+        const searchTerm = searchInput.value.toLowerCase();
+        filteredAddresses = data.filter((address) => {
+          return (
+            `${address.number} ${address.street}`
+              .toLowerCase()
+              .includes(searchTerm) ||
+            address.city.toLowerCase().includes(searchTerm) ||
+            address.state.toLowerCase().includes(searchTerm) ||
+            address.zip_code.toLowerCase().includes(searchTerm) ||
+            address.country.toLowerCase().includes(searchTerm)
+          );
+        });
+        currentPage = 1; // Reset to the first page after search
+        displayAddresses(filteredAddresses, currentPage);
+      });
+    })
+    .catch((error) => console.error("Error fetching addresses:", error));
+</script>
 {% endblock %}
