@@ -23,7 +23,7 @@ def home_info(address):
     street_number = street_number.strip()
     street_name = street_name.upper().strip()
     query = f"""
-        SELECT ZONING, GROSS_LEASABLE_AREA, TOTAL_PROP_VALUE, Total_Bedrooms, ETJ, CALCULATED_ACRES
+        SELECT ZONING, GROSS_LEASABLE_AREA, TOTAL_PROP_VALUE, Total_Bedrooms, ETJ, CALCULATED_ACRES, NEIGHBORHOOD
         FROM dtarp
         WHERE TRIM(street)='{street_name}' and number='{street_number}'
     """
@@ -37,7 +37,7 @@ def home_info(address):
     assert len(rows) != 0, "There are no entries in the database for this address"
     assert len(rows) == 1, f"There are {len(rows)} entries in the database for this address"
     
-    zoning, sqft, property_value, num_beds, etj, acres = rows[0]
+    zoning, sqft, property_value, num_beds, etj, acres, neighborhood = rows[0]
     
     assert zoning != None and sqft != None and property_value != None and num_beds != None and etj != None and acres, "Not all values are initialized"
     
@@ -68,8 +68,26 @@ def home_info(address):
         
     selected_value = request.form.get('selected_value')
     print(f"Slider value received: {selected_value}")
+    query = f"""
+            SELECT number, street 
+            FROM dtarp
+            WHERE NEIGHBORHOOD='{neighborhood}' and Total_Bedrooms = '{num_beds}' and number != '{street_number}' and street != '{street_name}'
+            """
+        # WHERE TRIM(street)='{street_name}' and TRIM(number)='{street_number}'
+    
+    result = db.session.execute(text(query))
+    rows = result.fetchall()
+    print("these are the rows")
+    all_link = []
+    print(rows[0:3])
+    for each in rows[0:3]:
+        address_part = f'{int(each[0])} {each[-1]}'
+        address_part = " ".join(address_part.split())  # Clean up any extra spaces
+        url = url_for('pick_home.home_info', address=address_part)
+        all_link.append([address_part, url])
     
     if request.method == 'POST': 
+        
         #create function to get Cap Rate and NOI 
 
         # Create a note string with the gathered data
@@ -81,7 +99,7 @@ def home_info(address):
         db.session.add(new_note)
         db.session.commit()
         flash('Note added!', category='success')
-    return render_template("display_home.html", user=current_user, address=address, cap_rate=cap_rate, noi=noi, monthly_rent=monthly_rent, annual_rental_income=annual_rental_income, expenses=expenses, zoning=zoning, sqft=sqft, property_value=property_value, num_beds=num_beds, acres=acres, etj=etj)
+    return render_template("display_home.html", user=current_user, address=address, cap_rate=cap_rate, noi=noi, monthly_rent=monthly_rent, annual_rental_income=annual_rental_income, expenses=expenses, zoning=zoning, sqft=sqft, property_value=property_value, num_beds=num_beds, acres=acres, etj=etj, all_link=all_link)
 
 @pick_home.route('/favorites', methods=['GET', 'POST'])
 def fav():
