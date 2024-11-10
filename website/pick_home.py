@@ -77,14 +77,19 @@ def home_info(address):
     
     result = db.session.execute(text(query))
     rows = result.fetchall()
-    print("these are the rows")
     all_link = []
-    print(rows[0:3])
-    for each in rows[0:3]:
-        address_part = f'{int(each[0])} {each[-1]}'
-        address_part = " ".join(address_part.split())  # Clean up any extra spaces
-        url = url_for('pick_home.home_info', address=address_part)
-        all_link.append([address_part, url])
+    for i in range(3):
+        try: 
+            address_part = f'{int(rows[i][0])} {rows[i][-1]}'
+            address_part = " ".join(address_part.split())
+            url = url_for('pick_home.home_info', address=address_part)
+            all_link.append([address_part, url])
+        except:
+            address_part = f'{int(street_number)} {street_name}'
+            address_part = " ".join(address_part.split())
+            url = url_for('pick_home.home_info', address=address_part)
+            all_link.append(["None", url])
+        
     
     if request.method == 'POST': 
         
