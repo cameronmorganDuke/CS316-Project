@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, session
+from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, session, flash
 from flask_login import login_required, current_user
 from .models import Note
 from . import db
@@ -27,16 +27,16 @@ def home_info(address):
         FROM dtarp
         WHERE TRIM(street)='{street_name}' and number='{street_number}'
     """
-        # WHERE TRIM(street)='{street_name}' and TRIM(number)='{street_number}'
     
     result = db.session.execute(text(query))
     rows = result.fetchall()
     
     print(f"\n\n{len(rows)}\n\n")
     
-    assert len(rows) != 0, "There are no entries in the database for this address"
-    assert len(rows) == 1, f"There are {len(rows)} entries in the database for this address"
-    
+    if len(rows) != 1:
+        flash(f"There are {len(rows)} entries in the database for this address", 'error')
+        return redirect(url_for('pick_home.home'))
+            
     zoning, sqft, property_value, num_beds, etj, acres, neighborhood = rows[0]
     
     assert zoning != None and sqft != None and property_value != None and num_beds != None and etj != None and acres, "Not all values are initialized"
@@ -73,7 +73,6 @@ def home_info(address):
             FROM dtarp
             WHERE NEIGHBORHOOD='{neighborhood}' and Total_Bedrooms = '{num_beds}' and number != '{street_number}' and street != '{street_name}'
             """
-        # WHERE TRIM(street)='{street_name}' and TRIM(number)='{street_number}'
     
     result = db.session.execute(text(query))
     rows = result.fetchall()
