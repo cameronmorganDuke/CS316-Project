@@ -42,6 +42,7 @@ def home_info(address):
     
     assert zoning != None and sqft != None and property_value != None and num_beds != None and etj != None and acres, "Not all values are initialized"
     
+    sqft = 625*num_beds if not sqft else sqft
     
     monthly_rent = int(property_value*0.005)
     
