@@ -10,6 +10,7 @@ Team Members:
 Project Type: Open Project Option
 
 **Current Features and Completed Milestones**
+
 **Improved Search and Display for All Addresses**
 
 JP led the refinement of the search functionality within our address table, ensuring that users can now easily search for properties and navigate across pages. This enhancement makes it easier for users to find specific properties in the database without being limited by the page indexing. His work has set the foundation for future expansion, such as linking addresses to more detailed property information.
@@ -24,6 +25,8 @@ Cameron and Connor collaborated to implement a similar home search feature. By q
 
 
 **GitHub Repository:** [Insite Reality Repo](https://github.com/cameronmorganDuke/CS316-Project)
+
 **Milestone 4 PDF:** https://docs.google.com/document/d/1uv00VkDfM28fGLYuBTXt5YrqaJfIql4ul-1960-J0WE/edit?usp=sharing
+
 **Presentation Video:** https://youtu.be/WqenHw_AaK4 
 
