@@ -169,10 +169,6 @@ def all_addresses():
 def get_all_addresses():
     try:
         # Query to fetch all addresses
-        # query = """
-        #     SELECT street, number, city, state, zip_code, country 
-        #     FROM dtarp
-        # """
         query = """
             SELECT street, number, NEIGHBORHOOD, CITY, PIN_EXT
             FROM dtarp
@@ -180,39 +176,34 @@ def get_all_addresses():
         result = db.session.execute(text(query))
         addresses = result.fetchall()
 
-        # Convert the query result to a list of dictionaries
-
-
         address_list = []
 
         for row in addresses:
-            try:
-                # Attempt to create the address part
-                address_part = f'{int(row[1])} {row[0]}'
-                address_part = " ".join(address_part.split())  # Clean up any extra spaces
+            street = row[0]
+            number = row[1]
+            neighborhood = row[2] or ''
+            city = row[3] or ''
 
-                # Generate the URL using url_for
+            if number and street:
+                address_part = f"{int(number)} {street}".strip()
+                # Generate the URL
                 url = url_for('pick_home.home_info', address=address_part)
-
                 # Create the link
                 link = f'<a href="{url}">View Property</a>'
-            except (TypeError, ValueError, AssertionError):
-                # If it fails (e.g., row[1] is None), set link to None
-                link = None
+            else:
+                link = ''
 
-            # Add the address to the list
-            address = {
-                'street': row[0],
-                'city': row[3],
+            # Build the address dictionary
+            address_dict = {
+                'number': number or '',
+                'street': street or '',
+                'city': city,
                 'state': 'NC',
-                'zip_code': row[2],
+                'neighborhood': neighborhood,
                 'country': 'USA',
-                'number': row[1],
                 'link': link
             }
-
-            address_list.append(address)
-
+            address_list.append(address_dict)
 
         # Return the list as a JSON response
         return jsonify(address_list)
