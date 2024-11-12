@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, session
+from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, session, flash
 from flask_login import login_required, current_user
 from .models import Note
 from . import db
@@ -27,30 +27,40 @@ def home_info(address):
         FROM dtarp
         WHERE TRIM(street)='{street_name}' and number='{street_number}'
     """
-        # WHERE TRIM(street)='{street_name}' and TRIM(number)='{street_number}'
     
     result = db.session.execute(text(query))
     rows = result.fetchall()
     
     print(f"\n\n{len(rows)}\n\n")
     
-    assert len(rows) != 0, "There are no entries in the database for this address"
-    assert len(rows) == 1, f"There are {len(rows)} entries in the database for this address"
-    
+    if len(rows) != 1:
+        flash(f"There are {len(rows)} entries in the database for this address", 'error')
+        return redirect(url_for('pick_home.home'))
+            
     zoning, sqft, property_value, num_beds, etj, acres, neighborhood = rows[0]
+    property_value = property_value if property_value else 1
     
     assert zoning != None and sqft != None and property_value != None and num_beds != None and etj != None and acres, "Not all values are initialized"
     
-    monthly_rent = property_value*0.015
-    annual_rental_income = monthly_rent*12
+    
+    monthly_rent = int(property_value*0.005)
     
     vacancy_allowance_pct = 5/100
     
-    annual_rental_income = annual_rental_income - annual_rental_income*vacancy_allowance_pct
+    annual_rental_income = monthly_rent * 12 * (1 - vacancy_allowance_pct)
     
     num_units = estimate_units(zoning, acres)
     
     isGas = False
+    
+    utilities = estimate_heating_cost(isGas, sqft) + \
+        estimate_garbage_cost(num_units, include=True) + \
+        estimate_water_cost(num_beds, water_usage_per_occupant=sum(WATER_USAGE_PER_OCCUPANT)/len(WATER_USAGE_PER_OCCUPANT)) + \
+        calculate_lawn_snow_cost(acres, lawn_care_per_acre=sum(LAWN_CARE_PER_ACRE)/len(LAWN_CARE_PER_ACRE))
+    
+    utilities = round(utilities, 0)
+    
+    legal = round(estimate_legal_cost(annual_rental_income, num_units), 0)
     
     expenses = estimate_expenses(
         annual_rental_income, num_units, 
@@ -73,7 +83,6 @@ def home_info(address):
             FROM dtarp
             WHERE NEIGHBORHOOD='{neighborhood}' and Total_Bedrooms = '{num_beds}' and number != '{street_number}' and street != '{street_name}'
             """
-        # WHERE TRIM(street)='{street_name}' and TRIM(number)='{street_number}'
     
     result = db.session.execute(text(query))
     rows = result.fetchall()
@@ -89,7 +98,7 @@ def home_info(address):
             address_part = " ".join(address_part.split())
             url = url_for('pick_home.home_info', address=address_part)
             all_link.append(["None", url])
-        
+    
     
     if request.method == 'POST': 
         
@@ -104,7 +113,23 @@ def home_info(address):
         db.session.add(new_note)
         db.session.commit()
         flash('Note added!', category='success')
-    return render_template("display_home.html", user=current_user, address=address, cap_rate=cap_rate, noi=noi, monthly_rent=monthly_rent, annual_rental_income=annual_rental_income, expenses=expenses, zoning=zoning, sqft=sqft, property_value=property_value, num_beds=num_beds, acres=acres, etj=etj, all_link=all_link)
+        
+    return render_template(
+        "display_home.html", 
+        user=current_user, address=address, cap_rate=cap_rate, noi=noi, 
+        monthly_rent=monthly_rent, annual_rental_income=annual_rental_income, 
+        expenses=expenses, zoning=zoning, sqft=sqft, property_value=property_value, 
+        num_beds=num_beds, acres=acres, etj=etj, all_link=all_link,
+        vacancy_allowance_pct=vacancy_allowance_pct * 100, isGas=isGas,
+        num_units=num_units, utilities=utilities, legal=legal
+    )
+    # return render_template(
+        # "display_home.html", user=current_user, 
+        # address=address, cap_rate=cap_rate, noi=noi, 
+        # monthly_rent=monthly_rent, annual_rental_income=annual_rental_income, 
+        # expenses=expenses, zoning=zoning, sqft=sqft, property_value=property_value, 
+        # num_beds=num_beds, acres=acres, etj=etj, all_link=all_link
+    # )
 
 @pick_home.route('/favorites', methods=['GET', 'POST'])
 def fav():

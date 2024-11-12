@@ -190,8 +190,8 @@ def estimate_expenses(annual_rental_income, num_units, isGas, sqft, property_val
         estimate_insurance_cost(property_value),
         estimate_garbage_cost(num_units, include=True),
         estimate_water_cost(num_beds, water_usage_per_occupant=sum(WATER_USAGE_PER_OCCUPANT)/len(WATER_USAGE_PER_OCCUPANT)),
-        management_reserve_cost(property_value),
-        maintenence_reserve_cost(property_value),
+        management_reserve_cost(annual_rental_income),
+        maintenence_reserve_cost(annual_rental_income),
         calculate_property_tax(etj, property_value),
         calculate_lawn_snow_cost(acres, lawn_care_per_acre=sum(LAWN_CARE_PER_ACRE)/len(LAWN_CARE_PER_ACRE))
     ]
