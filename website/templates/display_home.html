@@ -8,70 +8,108 @@
       <div id="slide-1">
         <!-- First Row: Cap Rate, Net Operating Income, Monthly Rent -->
         <div class="row mb-3 text-center">
-          <div class="col-4 themed-grid-col">
-            Cap Rate: <div id="cap_rate">--%</div>
+          <div class="col-4 themed-grid-col"><details>
+            <summary>Cap Rate</summary>
+            <div id="cap_rate">--%</div>
+          </details>
           </div>
           <div class="col-4 themed-grid-col">
-            Net Operating Income: <div id="noi">--</div>
+            <details>
+              <summary>Net Operating Income</summary>
+              <div id="noi">--</div>
+            </details> 
           </div>
           <div class="col-4 themed-grid-col">
-            Monthly Rent: 
-            <input type="number" id="monthly_rent" class="form-control" value="{{ monthly_rent }}" step="1" required>
+            <details>
+              <summary>Monthly Rent</summary>
+              <input type="number" id="monthly_rent" class="form-control" value="{{ monthly_rent }}" step="1" required>
+            </details> 
           </div>
         </div>
       
         <!-- Second Row: Rental Income, Expenses, Zoning -->
         <div class="row mb-3 text-center">
           <div class="col-4 themed-grid-col">
-            Rental Income: <div id="annual_rental_income" class="form">--</div>
+            <details>
+              <summary>Rental Income</summary>
+              <div id="annual_rental_income" class="form">--</div>
+            </details> 
           </div>
           <div class="col-4 themed-grid-col">
-            Expenses: <div id="expenses" class="form">--</div>
+            <details>
+              <summary>Expenses</summary>
+              <div id="expenses" class="form">--</div>
+            </details> 
           </div>
           <div class="col-4 themed-grid-col">
-            Zoning: <div>{{ zoning }}</div>
+            <details>
+              <summary>Zoning</summary>
+              <div>{{ zoning }}</div>
+            </details> 
           </div>
         </div>
       
         <!-- Third Row: Square Feet, Property Value, Number of Beds -->
         <div class="row mb-3 text-center">
           <div class="col-4 themed-grid-col">
-            Square Feet:
-            <input type="number" id="sqft" class="form-control" value="{{ sqft }}" step="1" required>
+            <details>
+              <summary>Square Feet</summary>
+              <input type="number" id="sqft" class="form-control" value="{{ sqft }}" step="1" required>
+            </details> 
+            
+            
           </div>
           <div class="col-4 themed-grid-col">
-            Property Value:
-            <input type="number" id="property_value" class="form-control" value="{{ property_value }}" step="1" required>
+            <details>
+              <summary>Property Value</summary>
+              <input type="number" id="property_value" class="form-control" value="{{ property_value }}" step="1" required>
+            </details>             
           </div>
           <div class="col-4 themed-grid-col">
-            Number of Beds: <div>{{ num_beds }}</div>
+            <details>
+              <summary>Number of Beds</summary>
+              <div>{{ num_beds }}</div>
+            </details>  
           </div>
         </div>
       
         <!-- Fourth Row: Acres, ETJ, Number of Units -->
         <div class="row mb-3 text-center">
           <div class="col-4 themed-grid-col">
-            Acres: <div>{{ acres }}</div>
+            <details>
+              <summary>Acres</summary>
+              <div>{{ acres }}</div>
+            </details>   
           </div>
           <div class="col-4 themed-grid-col">
-            Extraterritorial Jurisdiction: <div>{{ etj }}</div>
+            <details>
+              <summary>Extraterritorial Jurisdiction</summary>
+              <div>{{ etj }}</div>
+            </details>
           </div>
           <div class="col-4 themed-grid-col">
-            Number of Units:
-            <input type="number" id="num_units" class="form-control" value="{{ num_units }}" min="1" required>
+            <details>
+              <summary>Number of Units</summary>
+              <input type="number" id="num_units" class="form-control" value="{{ num_units }}" min="1" required>
+            </details>            
           </div>
         </div>
       
         <!-- Fifth Row: Vacancy Allowance Percentage and Is Gas Toggle -->
         <div class="row mb-3 text-center">
           <div class="col-6 themed-grid-col">
-            Vacancy Allowance Percentage:
-            <input type="range" id="vacancy_allowance_pct" class="form-control" value="{{ vacancy_allowance_pct }}" min="0" max="100" step="1" oninput="this.nextElementSibling.value = this.value">
-            <output>{{ vacancy_allowance_pct }}</output>%
+            <details>
+              <summary>Vacancy Allowance Percentage</summary>
+              <input type="range" id="vacancy_allowance_pct" class="form-control" value="{{ vacancy_allowance_pct }}" min="0" max="100" step="1" oninput="this.nextElementSibling.value = this.value">
+              <output>{{ vacancy_allowance_pct }}</output>%
+            </details>  
+            
           </div>
           <div class="col-6 themed-grid-col">
-            Is Gas:
-            <input type="checkbox" id="isGas" {% if isGas %}checked{% endif %}>
+            <details>
+              <summary>Is Gas</summary>
+              <input type="checkbox" id="isGas" {% if isGas %}checked{% endif %}>
+            </details>  
           </div>
         </div>
       </div>
@@ -88,42 +126,58 @@
         calculateLawnSnowCost(acres) -->
         <div class="row mb-3 text-center">
           <div class="col-6 themed-grid-col">
-            Legal Cost: 
-            <input type="number" id="legal" class="form-control" value="{{ legal }}">
+            <details>
+              <summary>Legal Cost</summary>
+              <input type="number" id="legal" class="form-control" value="{{ legal }}">
+            </details> 
           </div>
           <div class="col-6 themed-grid-col">
-            Utility Cost:
-            <input type="number" id="utility-cost" class="form-control" value="{{ utilities }}" min="1" required>
+            <details>
+              <summary>Utility Cost</summary>
+              <input type="number" id="utility-cost" class="form-control" value="{{ utilities }}" min="1" required>
+            </details>   
           </div>
         </div>
 
         <div class="row mb-3 text-center">
           <div class="col-6 themed-grid-col">
-            Management Reserve Percent:
-            <input type="number" id="managementPct" class="form-control" value="8" min="1" required>
+            <details>
+              <summary>Management Reserve Percent</summary>
+              <input type="number" id="managementPct" class="form-control" value="8" min="1" required>
+            </details>   
           </div>
           <div class="col-6 themed-grid-col">
-            Maintenence Reserve Percent:
-            <input type="number" id="maintenencePct" class="form-control" value="4" min="1" required>
+            <details>
+              <summary>Maintenence Reserve Percent</summary>
+              <input type="number" id="maintenencePct" class="form-control" value="4" min="1" required>
+            </details>                         
           </div>
         </div>
 
         <div class="row mb-3 text-center">
           <div class="col-3 themed-grid-col">
-            Management Reserve:
-            <div id="managementReserve" class="form">--</div>
+            <details>
+              <summary>Management Reserve</summary>
+              <div id="managementReserve" class="form">--</div>
+            </details> 
           </div>
           <div class="col-3 themed-grid-col">
-            Maintenence Reserve:
-            <div id="maintenenceReserve" class="form">--</div>
+            <details>
+              <summary>Maintenence Reserve</summary>
+              <div id="maintenenceReserve" class="form">--</div>
+            </details> 
           </div>
           <div class="col-3 themed-grid-col">
-            Property Tax:
-            <div id="property-tax" class="form">--</div>
+            <details>
+              <summary>Property Tax</summary>
+              <div id="property-tax" class="form">--</div>
+            </details> 
           </div>
           <div class="col-3 themed-grid-col">
-            Total Expenses:
-            <div id="total-expenses" class="form">--</div>
+            <details>
+              <summary>Total Expenses</summary>
+              <div id="total-expenses" class="form">--</div>
+            </details> 
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ from . import db
 import json
 from .utils import *
 from sqlalchemy import *
+from django.utils.safestring import mark_safe
 
 pick_home = Blueprint('pick_home', __name__)
 
@@ -108,9 +109,9 @@ def home_info(address):
         # Create a note string with the gathered data
         note = f"Address: {address} Cap Rate: {cap_rate} Net Operating Income: {noi}"
         print(address)
-
+        
         # Save note in the database
-        new_note = Note(data=note, user_id=current_user.id)
+        new_note = Note(data={'html_content': note}, user_id=current_user.id)
         db.session.add(new_note)
         db.session.commit()
         flash('Note added!', category='success')
@@ -212,3 +213,8 @@ def get_all_addresses():
         # Print the full exception for debugging
         print(f"Error: {str(e)}")
         return jsonify({'error': 'Failed to fetch addresses', 'details': str(e)}), 500
+    
+@pick_home.route("/explain" )
+def explain():
+    return render_template('explain.html', user=current_user)
+        
