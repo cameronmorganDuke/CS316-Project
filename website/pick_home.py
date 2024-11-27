@@ -111,7 +111,7 @@ def home_info(address):
         print(address)
         
         # Save note in the database
-        new_note = Note(data={'html_content': note}, user_id=current_user.id)
+        new_note = Note(note_addr = address, note_cap_rate = cap_rate, note_noi = noi, user_id=current_user.id)
         db.session.add(new_note)
         db.session.commit()
         flash('Note added!', category='success')

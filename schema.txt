@@ -48,7 +48,9 @@ User        [id                          Integer
 
 
 Note        [note_id                     Integer
-            data                          String
+            note_addr                     String
+            note_cap_rate                Numeric 
+            note_noi                     Numeric     
             date                        DateTime
             user_id                      Integer]
 

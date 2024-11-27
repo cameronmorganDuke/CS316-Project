@@ -5,10 +5,11 @@ from sqlalchemy.sql import func
 #Can change this to properties interested in eventually
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True) #software is smart enough to always advance id's
-    data = db.Column(db.String(10000))
+    note_addr = db.Column(db.String(10000))
+    note_cap_rate = db.Column(db.Double)
+    note_noi = db.Column(db.Double)
     date = db.Column(db.DateTime(timezone=True), default=func.now())  #func gets the current data and time and stores is as the default value
     user_id = db.Column(db.Integer, db.ForeignKey('user.id')) #like a weak entity set
-
 
 
 class User(db.Model, UserMixin):
