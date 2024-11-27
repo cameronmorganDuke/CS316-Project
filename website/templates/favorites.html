@@ -3,7 +3,7 @@ content %}
 <ul class="list-group list-group-flush" id="notes">
   {% for note in user.notes %}
   <li class="list-group-item">
-    {{ note.data }}
+    <strong>Address: </strong>{{ note.note_addr }} <strong> Cap Rate: </strong>{{note.note_cap_rate}}<strong> NOI: </strong>{{note.note_noi}}
     <button type="button" class="close" onClick="deleteNote({{ note.id }})">
       <span aria-hidden="true">&times;</span>
     </button>
