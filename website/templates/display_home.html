@@ -66,8 +66,8 @@
         <div class="row mb-3 text-center">
           <div class="col-6 themed-grid-col">
             Vacancy Allowance Percentage:
-            <input type="range" id="vacancy_allowance_pct" class="form-control" value="{{ vacancy_allowance_pct }}" min="0" max="100" step="1" oninput="this.nextElementSibling.value = this.value">
-            <output>{{ vacancy_allowance_pct }}</output>%
+            <input type="range" id="vacancy_allowance_pct" class="form-control" value="5" min="0" max="100" step="1" oninput="this.nextElementSibling.value = this.value">
+            <output>5</output>%
           </div>
           <div class="col-6 themed-grid-col">
             Is Gas:
@@ -77,15 +77,6 @@
       </div>
       <div id="slide-2" style="display: none;">
         <!-- First Row: Cap Rate, Net Operating Income, Monthly Rent -->
-        <!-- estimateLegalCost(annualRentalIncome, numUnits),
-        estimateHeatingCost(isGas, sqft),
-        estimateInsuranceCost(propertyValue),
-        estimateGarbageCost(numUnits, true),
-        estimateWaterCost(numBeds),
-        managementReserveCost(annualRentalIncome),
-        maintenenceReserveCost(annualRentalIncome),
-        calculatePropertyTax(etj, propertyValue),
-        calculateLawnSnowCost(acres) -->
         <div class="row mb-3 text-center">
           <div class="col-6 themed-grid-col">
             Legal Cost: 
@@ -109,19 +100,26 @@
         </div>
 
         <div class="row mb-3 text-center">
-          <div class="col-3 themed-grid-col">
+          <div class="col-6 themed-grid-col">
             Management Reserve:
             <div id="managementReserve" class="form">--</div>
           </div>
-          <div class="col-3 themed-grid-col">
+          <div class="col-6 themed-grid-col">
             Maintenence Reserve:
             <div id="maintenenceReserve" class="form">--</div>
           </div>
-          <div class="col-3 themed-grid-col">
+        </div>
+
+        <div class="row mb-3 text-center">
+          <div class="col-4 themed-grid-col">
             Property Tax:
             <div id="property-tax" class="form">--</div>
           </div>
-          <div class="col-3 themed-grid-col">
+          <div class="col-4 themed-grid-col">
+            Insurance:
+            <div id="insurance" class="form">--</div>
+          </div>
+          <div class="col-4 themed-grid-col">
             Total Expenses:
             <div id="total-expenses" class="form">--</div>
           </div>
@@ -201,46 +199,57 @@
       event.preventDefault(); // Prevent form submission to allow client-side calculation
       console.log("button pressed")
       try {
-          const monthlyRent = parseFloat(document.getElementById('monthly_rent').value) || 0;
-          const vacancyAllowancePct = parseFloat(document.getElementById('vacancy_allowance_pct').value) / 100 || 0;
-          const numUnits = parseInt(document.getElementById('num_units').value) || 1;
-          const sqft = parseFloat(document.getElementById('sqft').value) || 0;
-          const propertyValue = parseFloat(document.getElementById('property_value').value) || 0;
-          const isGas = document.getElementById('isGas').checked;
-          const etj = "{{ etj }}";  // Pass the ETJ value dynamically if required
-          const acres = parseFloat("{{ acres }}");
-          const legal = parseFloat(document.getElementById('legal').value) || 0
-          const utilities = parseFloat(document.getElementById('utility-cost').value) || 0
-          const maintenencePct = parseFloat(document.getElementById('maintenencePct').value) / 100 || 0.08
-          const managementPct = parseFloat(document.getElementById('managementPct').value) / 100 || 0.04
 
-          if (propertyValue <= 0) {
-              throw new Error(`Invalid input values. Property Value: ${propertyValue}`);
-          }
+        const propertyValue = parseFloat(document.getElementById('property_value').value) || 0;
 
-          const annualRentalIncome = monthlyRent * 12 * (1 - vacancyAllowancePct);
-          const expenses = estimateExpenses(
-            annualRentalIncome, numUnits, isGas, sqft, propertyValue, numUnits, etj, acres,
-            legal, utilities, maintenencePct, managementPct
-          );
-          const noi = annualRentalIncome - expenses;
-          const capRate = (noi / propertyValue) * 100;
-          const grade = gradeHouse(capRate, noi, propertyValue, monthlyRent, vacancyAllowancePct, numUnits, sqft, 0, expenses, 0)
 
-          console.log(grade.score)
-          console.log(grade.finalScore)
+        const monthlyRent = parseFloat(document.getElementById('monthly_rent').value) || 0.005*propertyValue;
+        const vacancyAllowancePct = parseFloat(document.getElementById('vacancy_allowance_pct').value) / 100 || 0;
+        const numUnits = parseInt(document.getElementById('num_units').value) || 1;
+        const sqft = parseFloat(document.getElementById('sqft').value) || 0;
+        const isGas = document.getElementById('isGas').checked;
+        const etj = "{{ etj }}";  // Pass the ETJ value dynamically if required
+        const acres = parseFloat("{{ acres }}");
+        const numBeds = parseFloat("{{ num_beds }}")
 
-          document.getElementById('managementReserve').innerText = '$' + (managementPct * annualRentalIncome).toFixed(2);
-          document.getElementById('maintenenceReserve').innerText = '$' +(maintenencePct * annualRentalIncome).toFixed(2);
-          document.getElementById('property-tax').innerText = '$' + calculatePropertyTax(etj, propertyValue).toFixed(2);
-          document.getElementById('expenses').innerText = '$' + expenses.toFixed(2);
-          document.getElementById('expenses').innerText = '$' + expenses.toFixed(2);
+        const annualRentalIncome = monthlyRent * 12 * (1 - vacancyAllowancePct);
 
-          document.getElementById('grade').innerText = grade.grade;
-          document.getElementById('total-expenses').innerText = '$' + expenses.toFixed(2);
-          document.getElementById('annual_rental_income').innerText = '$' + annualRentalIncome.toFixed(2);
-          document.getElementById('cap_rate').innerText = capRate.toFixed(2) + '%';
-          document.getElementById('noi').innerText = '$' + noi.toFixed(2);
+        const legal = parseFloat(document.getElementById('legal').value) || estimateLegalCost(annualRentalIncome, numUnits)
+        const utilities = parseFloat(document.getElementById('utility-cost').value) || estimateUtilities(isGas, sqft, numUnits, numBeds, acres)
+        const maintenencePct = parseFloat(document.getElementById('maintenencePct').value) / 100 || 0.08
+        const managementPct = parseFloat(document.getElementById('managementPct').value) / 100 || 0.04
+
+        if (propertyValue <= 0) {
+            throw new Error(`Invalid input values. Property Value: ${propertyValue}`);
+        }
+
+        const expenses = estimateExpenses(
+          annualRentalIncome, numUnits, isGas, sqft, propertyValue, numUnits, etj, acres,
+          legal, utilities, maintenencePct, managementPct
+        );
+        const noi = annualRentalIncome - expenses;
+        const capRate = (noi / propertyValue) * 100;
+        const grade = gradeHouse(capRate, noi, propertyValue, monthlyRent, vacancyAllowancePct, numUnits, sqft, 0, expenses, 0)
+
+        console.log(grade.score)
+        console.log(grade.finalScore)
+
+        document.getElementById('monthly_rent').value = monthlyRent.toFixed(2);
+        document.getElementById('utility-cost').value = utilities.toFixed(2);
+        document.getElementById('legal').value = legal.toFixed(2);
+
+
+        document.getElementById('managementReserve').innerText = '$' + (managementPct * annualRentalIncome).toFixed(2);
+        document.getElementById('maintenenceReserve').innerText = '$' +(maintenencePct * annualRentalIncome).toFixed(2);
+        document.getElementById('property-tax').innerText = '$' + calculatePropertyTax(etj, propertyValue).toFixed(2);
+        document.getElementById('expenses').innerText = '$' + expenses.toFixed(2);
+
+        document.getElementById('grade').innerText = grade.grade;
+        document.getElementById('insurance').innerText = '$' + estimateInsuranceCost(propertyValue).toFixed(2);
+        document.getElementById('total-expenses').innerText = '$' + expenses.toFixed(2);
+        document.getElementById('annual_rental_income').innerText = '$' + annualRentalIncome.toFixed(2);
+        document.getElementById('cap_rate').innerText = capRate.toFixed(2) + '%';
+        document.getElementById('noi').innerText = '$' + noi.toFixed(2);
       } catch (error) {
           document.getElementById('cap_rate').innerText = "Error";
           document.getElementById('noi').innerText = "Error";

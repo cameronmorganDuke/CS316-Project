@@ -31,8 +31,6 @@ def home_info(address):
     result = db.session.execute(text(query))
     rows = result.fetchall()
     
-    print(f"\n\n{len(rows)}\n\n")
-    
     if len(rows) != 1:
         flash(f"There are {len(rows)} entries in the database for this address", 'error')
         return redirect(url_for('pick_home.home'))
@@ -42,43 +40,8 @@ def home_info(address):
     
     assert zoning != None and sqft != None and property_value != None and num_beds != None and etj != None and acres, "Not all values are initialized"
     
-    sqft = 625*num_beds if not sqft else sqft
-    
-    monthly_rent = int(property_value*0.005)
-    
-    vacancy_allowance_pct = 5/100
-    
-    annual_rental_income = monthly_rent * 12 * (1 - vacancy_allowance_pct)
-    
     num_units = estimate_units(zoning, acres)
     
-    isGas = False
-    
-    utilities = estimate_heating_cost(isGas, sqft) + \
-        estimate_garbage_cost(num_units, include=True) + \
-        estimate_water_cost(num_beds, water_usage_per_occupant=sum(WATER_USAGE_PER_OCCUPANT)/len(WATER_USAGE_PER_OCCUPANT)) + \
-        calculate_lawn_snow_cost(acres, lawn_care_per_acre=sum(LAWN_CARE_PER_ACRE)/len(LAWN_CARE_PER_ACRE))
-    
-    utilities = round(utilities, 0)
-    
-    legal = round(estimate_legal_cost(annual_rental_income, num_units), 0)
-    
-    expenses = estimate_expenses(
-        annual_rental_income, num_units, 
-        isGas, sqft, property_value, 
-        num_beds, etj, acres
-    )
-    
-    # annual operating expenses = electricity + water + sewer + garbage + real estate taxes + property insurance + heating + management reserve calculated + maintenance reserve calculated + legal and professional + lawn and snow
-    # annual gross scheduled income = total monthly rental income * 12
-    # gross operating income = annual gross scheduled income - vacancy allowance % * annual gross scheduled income
-
-    #create function to get Cap Rate and NOI 
-    noi = annual_rental_income - expenses
-    cap_rate = noi / property_value * 100
-        
-    selected_value = request.form.get('selected_value')
-    print(f"Slider value received: {selected_value}")
     query = f"""
             SELECT number, street 
             FROM dtarp
@@ -106,7 +69,8 @@ def home_info(address):
         #create function to get Cap Rate and NOI 
 
         # Create a note string with the gathered data
-        note = f"Address: {address} Cap Rate: {cap_rate} Net Operating Income: {noi}"
+        note = f"Address: {address}"
+        # note = f"Address: {address} Cap Rate: {cap_rate} Net Operating Income: {noi}"
         print(address)
 
         # Save note in the database
@@ -117,20 +81,10 @@ def home_info(address):
         
     return render_template(
         "display_home.html", 
-        user=current_user, address=address, cap_rate=cap_rate, noi=noi, 
-        monthly_rent=monthly_rent, annual_rental_income=annual_rental_income, 
-        expenses=expenses, zoning=zoning, sqft=sqft, property_value=property_value, 
+        user=current_user, address=address, zoning=zoning, sqft=sqft, property_value=property_value, 
         num_beds=num_beds, acres=acres, etj=etj, all_link=all_link,
-        vacancy_allowance_pct=vacancy_allowance_pct * 100, isGas=isGas,
-        num_units=num_units, utilities=utilities, legal=legal
+        num_units=num_units
     )
-    # return render_template(
-        # "display_home.html", user=current_user, 
-        # address=address, cap_rate=cap_rate, noi=noi, 
-        # monthly_rent=monthly_rent, annual_rental_income=annual_rental_income, 
-        # expenses=expenses, zoning=zoning, sqft=sqft, property_value=property_value, 
-        # num_beds=num_beds, acres=acres, etj=etj, all_link=all_link
-    # )
 
 @pick_home.route('/favorites', methods=['GET', 'POST'])
 def fav():

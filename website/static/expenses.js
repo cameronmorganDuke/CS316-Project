@@ -104,11 +104,15 @@ function calculateLawnSnowCost(acres) {
     return acres * avgLawnCareCost;
 }
 
+function estimateUtilities(isGas, sqft, numUnits, numBeds, acres){
+    return estimateHeatingCost(isGas, sqft) + estimateGarbageCost(numUnits, true) + estimateWaterCost(numBeds) + calculateLawnSnowCost(acres)
+}
+
 function estimateExpenses(annualRentalIncome, numUnits, isGas, sqft, propertyValue, numBeds, etj, acres, legal, utilities, maintenencePct, managementPct) {
     const costs = [
         legal ? legal: estimateLegalCost(annualRentalIncome, numUnits),
         utilities ? utilities: estimateHeatingCost(isGas, sqft),
-        utilities ? 0: estimateInsuranceCost(propertyValue),
+        estimateInsuranceCost(propertyValue),
         utilities ? 0: estimateGarbageCost(numUnits, true),
         utilities ? 0: estimateWaterCost(numBeds),
         managementPct ? managementPct*annualRentalIncome : managementReserveCost(annualRentalIncome),
@@ -119,67 +123,6 @@ function estimateExpenses(annualRentalIncome, numUnits, isGas, sqft, propertyVal
     console.log(estimateLegalCost(annualRentalIncome, numUnits))
     return costs.reduce((total, cost) => total + cost, 0);
 }
-
-// function gradeHouse(capRate, noi, propertyValue, monthlyRent, vacancyAllowance, numUnits, sqft, neighborhoodScore, expenses, zoningScore) {
-    
-
-//     // Define weights for each factor
-//     const weights = {
-//         capRate: 0.03,          // Reduce by factor of 10
-//         noi: 0.02,              // Reduce by factor of 10
-//         propertyValue: -0.01,   // Reduce by factor of 10
-//         monthlyRent: 0.02,      // Reduce by factor of 10
-//         vacancyAllowance: -0.005, // Reduce by factor of 10
-//         numUnits: 0.01,         // Reduce by factor of 10
-//         sqft: 0.005,            // Reduce by factor of 10
-//         neighborhood: 0.01,     // Reduce by factor of 10
-//         expenses: -0.02,        // Reduce by factor of 10
-//         zoning: 0.005           // Reduce by factor of 10
-//     };
-    
-
-//     // Calculate the score with weights applied
-//     const score = (
-//         weights.capRate * capRate +
-//         weights.noi * noi +
-//         weights.propertyValue * (1 / propertyValue) +  // Inverse for lower value preference
-//         weights.monthlyRent * monthlyRent +
-//         weights.vacancyAllowance * (1 - vacancyAllowance) +
-//         weights.numUnits * numUnits +
-//         weights.sqft * sqft +
-//         // weights.neighborhood * neighborhoodScore +
-//         weights.expenses * (1 / expenses)  // Inverse for lower expenses
-//         // weights.zoning * zoningScore
-//     );
-
-//     // Define realistic min and max scores for normalization
-//     const minScore = 0;  // Minimum expected scaled-down score
-//     const maxScore = 10; // Maximum expected scaled-down score
-
-//     // Normalize to 1–100
-//     const normalizedScore = 1 + ((score - minScore) / (maxScore - minScore)) * 99;
-//     // const finalScore = Math.min(100, Math.max(1, normalizedScore));
-//     const k = -1/30
-//     const x0 = 100
-//     const finalScore = 100 / (1 + Math.exp(k*(score - x0)))
-    
-
-//     // Assign grade based on score ranges
-//     let grade;
-//     if (finalScore >= 90) {
-//         grade = 'A';
-//     } else if (finalScore >= 75) {
-//         grade = 'B';
-//     } else if (finalScore >= 60) {
-//         grade = 'C';
-//     } else if (finalScore >= 40) {
-//         grade = 'D';
-//     } else {
-//         grade = 'F';
-//     }
-
-//     return { grade, score, finalScore };
-// }
 
 function gradeHouse(capRate, noi, propertyValue, monthlyRent, vacancyAllowance, numUnits, sqft, neighborhoodScore, expenses, zoningScore) {
     // Industry standard metrics
