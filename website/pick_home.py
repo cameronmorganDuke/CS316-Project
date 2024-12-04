@@ -20,7 +20,12 @@ def home():
 
 @pick_home.route('/<address>', methods=['GET', 'POST'])
 def home_info(address):
-    street_number, street_name = extract_address_components(address)
+    try: 
+        street_number, street_name = extract_address_components(address)
+    except:
+        print("This is not an address")
+        return redirect(url_for('pick_home.home_info', address=address))
+        
     street_number = street_number.strip()
     street_name = street_name.upper().strip()
     query = f"""
