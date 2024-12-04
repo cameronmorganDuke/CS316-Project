@@ -37,7 +37,6 @@ def home_info(address):
     result = db.session.execute(text(query))
     rows = result.fetchall()
     
-    print(f"\n\n{len(rows)}\n\n")
     
     if len(rows) != 1:
         flash(f"There are {len(rows)} entries in the database for this address", 'error')
@@ -108,15 +107,8 @@ def home_info(address):
     
     
     if request.method == 'POST': 
-        
-        #create function to get Cap Rate and NOI 
-
-        # Create a note string with the gathered data
-        note = f"Address: {address} Cap Rate: {cap_rate} Net Operating Income: {noi}"
-        print(address)
-        
         # Save note in the database
-        new_note = Note(note_addr = address, note_cap_rate = cap_rate, note_noi = noi, user_id=current_user.id)
+        new_note = Note(note_addr = address, note_cap_rate = session["cap_rate"], note_noi = session["noi"], user_id=current_user.id)
         db.session.add(new_note)
         db.session.commit()
         flash('Note added!', category='success')
@@ -222,4 +214,33 @@ def get_all_addresses():
 @pick_home.route("/explain" )
 def explain():
     return render_template('explain.html', user=current_user)
+
+@pick_home.route('/submit_cap_rate_and_noi', methods=['POST'])
+def submit_cap_rate_and_noi():
+    try:
+        # Get the JSON data from the POST request
+        data = request.get_json()
+
+        # Extract cap_rate and noi from the request
+        cap_rate = data.get('cap_rate')
+        noi = data.get('noi')
+        session["cap_rate"] = cap_rate
+        session["noi"] = noi
+        # Perform any necessary processing with cap_rate and noi (e.g., saving to database)
+        print(f"Received Cap Rate: {cap_rate} and NOI: {noi}")
+
+        # Return a response to the frontend
+        return jsonify({
+            "status": "success",
+            "cap_rate": cap_rate,
+            "noi": noi
+        })
+
+    except Exception as e:
+        print("Error processing the request:", e)
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 400
+
         

@@ -211,7 +211,25 @@
       <div class="col-sm-4"></div>
     </div>
     <br />
-      <button type="submit" class="btn btn-primary">Add Favorite</button>
+      <button onclick="submitCapRate()" type="submit" class="btn btn-primary">Add Favorite</button>
+      <script>
+        function submitCapRate() {
+            const capRate = document.getElementById('cap_rate').textContent.trim();
+            console.log(capRate)
+            fetch('/submit_cap_rate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ cap_rate: capRate })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Response from backend:', data);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
       </div>
 </form>
 
@@ -295,12 +313,31 @@
           document.getElementById('annual_rental_income').innerText = '$' + annualRentalIncome.toFixed(2);
           document.getElementById('cap_rate').innerText = capRate.toFixed(2) + '%';
           document.getElementById('noi').innerText = '$' + noi.toFixed(2);
+          sendCapRateAndNoiToBackend(capRate, noi);
       } catch (error) {
           document.getElementById('cap_rate').innerText = "Error";
           document.getElementById('noi').innerText = "Error";
           console.error("Error calculating Cap Rate or NOI:", error);
       }
   }
+  function sendCapRateAndNoiToBackend(capRate, noi) {
+    fetch('/submit_cap_rate_and_noi', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            cap_rate: capRate,
+            noi: noi
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Response from backend:', data);
+    })
+    .catch(error => console.error('Error sending data to backend:', error));
+}
   document.addEventListener('DOMContentLoaded', calculateCapRate);
+
 </script>
 {% endblock %}
